@@ -1,8 +1,31 @@
 <html>
-    <head></head>
+    <head>
+        <title>John Paul</title>
+    </head>
     <body>
-        <h1> On the way to being John Paul</h1>
-        <p>Connected users: <span id="userCount">0</span></p>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+            }
+            h1 {
+                color: #333;
+            }
+            p {
+                color: #666;
+            }
+            #text {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        </style>
+        <div id="text">
+            <h1> On the way to being John Paul</h1>
+            <p>Live visitors on this website: <span id="userCount">0</span></p>
+        </div>
+        
     </body>
 
     <script>
@@ -12,6 +35,14 @@
 
         ws.onmessage = (event) => {
             console.log(event.data);
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === 'userCount') {
+                    document.getElementById('userCount').innerText = data.count;
+                }
+            } catch (e) {
+                console.error('Error parsing WebSocket message:', e);
+            }
         };
     </script>
 </html>

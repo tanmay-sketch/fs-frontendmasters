@@ -1,4 +1,5 @@
 const express = require('express');
+const { type } = require('os');
 const server = require('http').createServer();
 const app = express();
 
@@ -18,20 +19,28 @@ wss.on('connection', function connection(ws) {
     const numClients = wss.clients.size;
     console.log("Clients connected", numClients);
 
-    wss.broadcast(`Current visitors: ${numClients}`);
+    const userCountMessage = { type: 'userCount', count: numClients };
+    const welcomeMessage = { message: 'Welcome to my server', clients: numClients };
+
+    // Broadcast the number of connected clients to all clients
+    wss.broadcast(userCountMessage);
 
     if (ws.readyState === ws.OPEN) {
-        ws.send('Welcome to my server, there are ' + (numClients-1) + ' other people here');
+        // send a json message to the client
+        ws.send(JSON.stringify(welcomeMessage));
     }
 
     ws.on('close', function close() {
-        wss.broadcast(`Current visitors: ${numClients}`);
+        wss.broadcast(userCountMessage);
         console.log('A client has disconnected');
     });
 });
 
-wss.broadcast = function broadccast(data) {
+wss.broadcast = function broadcast(data) {
+    const message = JSON.stringify(data);
     wss.clients.forEach(function each(client) {
-        client.send(data);
+        if (client.readyState === client.OPEN) {
+            client.send(message);
+        }
     });
 }

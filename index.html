@@ -1,0 +1,17 @@
+<html>
+    <head></head>
+    <body>
+        <h1> On the way to being John Paul</h1>
+        <p>Connected users: <span id="userCount">0</span></p>
+    </body>
+
+    <script>
+        let ws;
+        const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        ws = new WebSocket(`${proto}://${window.location.host}`);
+
+        ws.onmessage = (event) => {
+            console.log(event.data);
+        };
+    </script>
+</html>

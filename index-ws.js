@@ -3,6 +3,9 @@ const { type } = require('os');
 const server = require('http').createServer();
 const app = express();
 
+// used to serve static files from the public directory
+app.use('/images', express.static('images'));
+
 app.get('/', function(req, res) {
     res.sendFile('index.html',{root: __dirname});
 });
